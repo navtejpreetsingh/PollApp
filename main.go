@@ -72,6 +72,17 @@ func participateHandler(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(response)
 }
 
+// func addQuestionHandler(w http.ResponseWriter, r *http.Request) {
+// 	if r.URL.Path != "/add" { // https://pkg.go.dev/net/http#Error
+// 		http.Error(w, "CODE 404 not found!!", http.StatusNotFound)
+// 		return
+// 	}
+// 	if r.Method != "POST" { // https://pkg.go.dev/net/http#Error
+// 		http.Error(w, "Method is not supported.", http.StatusNotFound)
+// 		return
+// 	}
+// }
+
 // func enableCors(w *http.ResponseWriter) {
 // 	(*w).Header().Set("Access-Control-Allow-Origin", "http://localhost:3000")
 // 	(*w).Header().Set("Access-Control-Allow-Credentials", "true")
@@ -103,6 +114,13 @@ func main() {
 	http.HandleFunc("/participate", participateHandler)
 
 	fmt.Println("Start the server on port 8080")
+
+	// qid := views.AddQuestion(DB, "qq", []string{"a", "b", "c", "d"})
+	// fmt.Println("Question added successfully with qid :", qid)
+
+	// views.DeleteQuestion(DB, 3)
+	// views.DeleteQuestion(DB, 4)
+	// views.DeleteQuestion(DB, 5)
 
 	// start server
 	if err := http.ListenAndServe("localhost:8080", nil); err != nil {

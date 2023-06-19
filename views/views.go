@@ -127,7 +127,68 @@ func RegisterVote(DB *sql.DB, qid int, option_id int) {
 	fmt.Printf("votes updated\n")
 }
 
-// // ADD a new question
-// func addQuestion() {}
+// ADD a new question
+func AddQuestion(DB *sql.DB, question string, options []string) int {
 
-// // DELETE a question() {}
+	addQuestionQuery := fmt.Sprintf("INSERT INTO questions_table(question, enabled) VALUES('%v',true);", question)
+	res, err := DB.Exec(addQuestionQuery)
+	if err != nil {
+		panic(err)
+	}
+	_, err = res.RowsAffected()
+	if err != nil {
+		panic(err)
+	}
+
+	// question = "How are you doing today?"
+	var qid int
+
+	getQidQuery := fmt.Sprintf("SELECT qid FROM questions_table WHERE question = '%v';", question)
+
+	if err := DB.QueryRow(getQidQuery).Scan(&qid); err != nil {
+		fmt.Println("executed")
+		if err == sql.ErrNoRows {
+			fmt.Printf("Unknown question")
+		} else {
+			fmt.Errorf("SQL error: %v", err)
+		}
+		return -1
+	}
+
+	// fmt.Printf("found qid (%v) for question: %v\n", qid, question)
+
+	for option_id, option := range options {
+		res, err := DB.Exec(fmt.Sprintf("insert into options_table values(%v,%v,'%v',0);", qid, option_id, option))
+		if err != nil {
+			panic(err)
+		}
+		_, err = res.RowsAffected()
+		if err != nil {
+			panic(err)
+		}
+	}
+	return qid
+}
+
+// DELETE a question() {}
+func DeleteQuestion(DB *sql.DB, qid int) {
+	deleteFromOptionsTable := fmt.Sprintf("DELETE FROM options_table WHERE qid=%v", qid)
+	res, err := DB.Exec(deleteFromOptionsTable)
+	if err != nil {
+		panic(err)
+	}
+	_, err = res.RowsAffected()
+	if err != nil {
+		panic(err)
+	}
+
+	deleteFromQuestionsTable := fmt.Sprintf("DELETE FROM questions_table WHERE qid=%v", qid)
+	res, err = DB.Exec(deleteFromQuestionsTable)
+	if err != nil {
+		panic(err)
+	}
+	_, err = res.RowsAffected()
+	if err != nil {
+		panic(err)
+	}
+}

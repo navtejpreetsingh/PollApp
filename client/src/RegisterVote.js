@@ -75,8 +75,7 @@ const RegisterVote = () => {
 		if (nextQuestion < questions.length) {
 			setCurrentQuestion(nextQuestion);
 		} else {
-            alert("You have successfully participated in the poll!")
-			setIsPending(false);
+            setIsPending(false);
 		}
     };
 
@@ -104,7 +103,7 @@ const RegisterVote = () => {
             }
         })
         .catch((err) => console.log("ERROR:", err));
-
+        alert("You have successfully participated in the poll! Redirecting you to the home Page...")
         navigate("/");
     };
 
