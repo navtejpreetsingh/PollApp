@@ -8,6 +8,8 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"strconv"
+	"strings"
 
 	_ "github.com/lib/pq"
 )
@@ -72,16 +74,59 @@ func participateHandler(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(response)
 }
 
-// func addQuestionHandler(w http.ResponseWriter, r *http.Request) {
-// 	if r.URL.Path != "/add" { // https://pkg.go.dev/net/http#Error
-// 		http.Error(w, "CODE 404 not found!!", http.StatusNotFound)
-// 		return
-// 	}
-// 	if r.Method != "POST" { // https://pkg.go.dev/net/http#Error
-// 		http.Error(w, "Method is not supported.", http.StatusNotFound)
-// 		return
-// 	}
-// }
+func addQuestionHandler(w http.ResponseWriter, r *http.Request) {
+	if r.URL.Path != "/add" { // https://pkg.go.dev/net/http#Error
+		http.Error(w, "CODE 404 not found!!", http.StatusNotFound)
+		return
+	}
+	if r.Method != "POST" { // https://pkg.go.dev/net/http#Error
+		http.Error(w, "Method is not supported.", http.StatusNotFound)
+		return
+	}
+
+	var pollQuestion models.PollQuestion
+	err := json.NewDecoder(r.Body).Decode(&pollQuestion)
+	if err != nil {
+		log.Println("Error decoding JSON:", err)
+		// fmt.Fprintf(w, "ERROR: %v", err.Error)
+		http.Error(w, "Invalid request payload", http.StatusBadRequest)
+		return
+	}
+
+	fmt.Println("inside the handler :: ", pollQuestion)
+	question := pollQuestion.Question
+	options := []string{}
+	for _, opt := range pollQuestion.Options {
+		options = append(options, opt.Option)
+	}
+
+	qid := views.AddQuestion(DB, question, options)
+	response := httpResponse{Status: strconv.Itoa(qid), Code: 201}
+	w.WriteHeader(http.StatusCreated)
+	json.NewEncoder(w).Encode(response)
+}
+
+func deleteQuestionHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method != "DELETE" {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	// Parse the question ID from the URL path
+	parts := strings.Split(r.URL.Path, "/")
+	if len(parts) != 3 {
+		http.Error(w, "Invalid request URL", http.StatusBadRequest)
+		return
+	}
+	qid, _ := strconv.Atoi(parts[2])
+
+	// Assuming you have a function to delete the question by ID
+	views.DeleteQuestion(DB, qid)
+
+	response := httpResponse{Status: "Question deleted successfully", Code: http.StatusOK}
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(response)
+}
 
 // func enableCors(w *http.ResponseWriter) {
 // 	(*w).Header().Set("Access-Control-Allow-Origin", "http://localhost:3000")
@@ -112,15 +157,10 @@ func main() {
 	// routes
 	http.HandleFunc("/view_poll", viewPollHandler)
 	http.HandleFunc("/participate", participateHandler)
+	http.HandleFunc("/add", addQuestionHandler)
+	http.HandleFunc("/delete/", deleteQuestionHandler)
 
 	fmt.Println("Start the server on port 8080")
-
-	// qid := views.AddQuestion(DB, "qq", []string{"a", "b", "c", "d"})
-	// fmt.Println("Question added successfully with qid :", qid)
-
-	// views.DeleteQuestion(DB, 3)
-	// views.DeleteQuestion(DB, 4)
-	// views.DeleteQuestion(DB, 5)
 
 	// start server
 	if err := http.ListenAndServe("localhost:8080", nil); err != nil {
