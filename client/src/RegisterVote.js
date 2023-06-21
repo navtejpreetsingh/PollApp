@@ -1,13 +1,5 @@
-import Radio from '@mui/material/Radio';
-import RadioGroup from '@mui/material/RadioGroup';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import FormControl from '@mui/material/FormControl';
-import FormLabel from '@mui/material/FormLabel';
 import { useState, useEffect } from 'react';
 import { useNavigate } from "react-router-dom";
-import {BrowserRouter as Router, Switch, Route } from 'react-router-dom';
-import QuestionList from './QuestionList';
-import Button from '@mui/material/Button';
 import axios from 'axios';
 
 const API_BASE_URL = "/";
@@ -80,8 +72,6 @@ const RegisterVote = () => {
     };
 
     const handleSubmit = async (e) => {
-        // alert("submitted !!");
-        // e.preventDefault();
         var requestData = convertData(option);
         console.log("requestData here > ", requestData);
 

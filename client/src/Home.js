@@ -1,7 +1,7 @@
 import { Button } from '@mui/base';
 import QuestionList from './QuestionList';
 import { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import axios from "axios";
 
 

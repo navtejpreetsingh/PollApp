@@ -1,19 +1,5 @@
-// import Paper from '@material-ui/core/Paper';
-import {
-    ArgumentAxis,
-    ValueAxis,
-    Chart,
-    BarSeries,
-} from '@devexpress/dx-react-chart-material-ui';
 
 const QuestionList = ({questions, title}) => {
-    
-    // const data = [
-    //     { argument: 'Monday', value: 30 },
-    //     { argument: 'Tuesday', value: 20 },
-    //     { argument: 'Wednesday', value: 10 },
-    //     { argument: 'Thursday', value: 50 },
-    // ];
 
     return (
         <div className="Question-List">

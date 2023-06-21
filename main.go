@@ -128,6 +128,7 @@ func deleteQuestionHandler(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(response)
 }
 
+// // Function can used when you want to enableCors, we are using proxy from client.
 // func enableCors(w *http.ResponseWriter) {
 // 	(*w).Header().Set("Access-Control-Allow-Origin", "http://localhost:3000")
 // 	(*w).Header().Set("Access-Control-Allow-Credentials", "true")
